@@ -1,0 +1,58 @@
+name: Build GTA Clipper APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      space_url:
+        description: "Your Hugging Face Space link, e.g. https://huggingface.co/spaces/yourname/gta-clipper"
+        required: true
+        type: string
+
+permissions:
+  contents: write   # needed to publish the APK as a Release (easy download link)
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.14.3"
+
+      - name: Build the APK
+        run: gradle :app:assembleDebug --no-daemon -PspaceUrl="${{ inputs.space_url }}"
+
+      - name: Rename APK
+        run: |
+          mkdir -p dist
+          cp app/build/outputs/apk/debug/app-debug.apk dist/GTA-Clipper.apk
+          ls -la dist
+
+      - name: Keep APK as a download (Actions tab)
+        uses: actions/upload-artifact@v4
+        with:
+          name: GTA-Clipper-APK
+          path: dist/GTA-Clipper.apk
+
+      - name: Publish APK in Releases (direct phone download link)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: GTA Clipper build ${{ github.run_number }}
+          body: |
+            Download **GTA-Clipper.apk** below on your Android phone and open it to install.
+            Server: ${{ inputs.space_url }}
+          files: dist/GTA-Clipper.apk
