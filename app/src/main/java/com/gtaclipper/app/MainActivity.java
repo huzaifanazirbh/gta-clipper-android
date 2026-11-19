@@ -142,7 +142,7 @@ public class MainActivity extends Activity {
                 customViewCallback = callback;
                 root.addView(view, new FrameLayout.LayoutParams(MATCH, MATCH));
                 web.setVisibility(View.GONE);
-                setImmersive(true);
+                toggleImmersive(true);
             }
 
             @Override
@@ -331,13 +331,13 @@ public class MainActivity extends Activity {
         root.removeView(customView);
         customView = null;
         web.setVisibility(View.VISIBLE);
-        setImmersive(false);
+        toggleImmersive(false);
         if (customViewCallback != null) customViewCallback.onCustomViewHidden();
         customViewCallback = null;
     }
 
     @SuppressWarnings("deprecation")
-    private void setImmersive(boolean on) {
+    private void toggleImmersive(boolean on) {
         View decor = getWindow().getDecorView();
         decor.setSystemUiVisibility(on
                 ? View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
