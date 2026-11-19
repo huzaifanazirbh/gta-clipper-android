@@ -1,0 +1,35 @@
+plugins {
+    id 'com.android.application'
+}
+
+// The online clipper address. Set when building (GitHub "Run workflow" box), can also be changed inside the app.
+def spaceUrl = (project.findProperty("spaceUrl") ?: "").toString().trim()
+
+android {
+    namespace 'com.gtaclipper.app'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "com.gtaclipper.app"
+        minSdk 26
+        targetSdk 35
+        versionCode 1
+        versionName "1.0"
+        buildConfigField "String", "SPACE_URL", "\"${spaceUrl}\""
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+}
